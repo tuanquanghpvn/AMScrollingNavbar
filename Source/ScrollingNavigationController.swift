@@ -121,6 +121,12 @@ open class ScrollingNavigationController: UINavigationController, UIGestureRecog
    The delegate for the scrolling navbar controller
    */
   open weak var scrollingNavbarDelegate: ScrollingNavigationControllerDelegate?
+  
+  /**
+   Auto change content Inset of scrollView when scroll
+   Defaults to `true`
+   */
+  open var scrollAutoChangeContentInset = true
 
   /**
    An array of `NavigationBarFollower`s that will follow the navbar
@@ -469,7 +475,7 @@ open class ScrollingNavigationController: UINavigationController, UIGestureRecog
     updateNavbarAlpha()
     restoreContentOffset(scrollDelta)
     updateFollowers()
-    updateContentInset(scrollDelta)
+    updateContentInset(scrollAutoChangeContentInset ? scrollDelta : 0.0)
     
     let newState = state
     if newState != previousState {
@@ -575,7 +581,7 @@ open class ScrollingNavigationController: UINavigationController, UIGestureRecog
       self.updateSizing(delta)
       self.updateFollowers()
       self.updateNavbarAlpha()
-      self.updateContentInset(delta)
+      self.updateContentInset(self.scrollAutoChangeContentInset ? delta : 0.0)
     }, completion: { _ in
       self.navigationBar.isUserInteractionEnabled = (self.state == .expanded)
       self.scrollingNavbarDelegate?.scrollingNavigationController?(self, didChangeState: self.state)
